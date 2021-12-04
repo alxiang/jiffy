@@ -24,6 +24,13 @@ std::vector<std::string> random_block_allocator::allocate(std::size_t count, con
   while (blocks_considered < free_blocks_.size() && blocks.size() < count) {
     auto block_prefix = prefix(*it);
     if (prefixes.find(block_prefix) == prefixes.end()) {
+      utils::logger(utils::log_level::info, utils::log_utils::compute_method_name(__FUNCTION__, __PRETTY_FUNCTION__)) << block_prefix;
+      // NOTE(ALEC): we allocate blocks if their prefixes don't match any prefixes seen so far
+      // This supports replication by having the blocks on different machines
+      // For our purposes, we shouldn't care about replication
+      // - each Flink worker's ValueState's ChronicleMap file has multiple blocks
+      // - all blocks should be on same node as Flink worker
+      // - we can turn off replication and have a length of 1 for each replication chain allocated
       blocks.push_back(*it);
       prefixes.insert(block_prefix);
     }

@@ -84,8 +84,12 @@ data_status directory_tree::create(const std::string &path,
 
   auto parent = std::dynamic_pointer_cast<ds_dir_node>(node);
 
+  // NOTE(ALEC): This is where blocks are allocated on the create() call from the client
+  // Each block is represented by a replica chain. 
   std::vector<replica_chain> blocks;
   for (int32_t i = 0; i < num_blocks; ++i) {
+
+    // NOTE(ALEC): This is exactly where blocks are allocated
     replica_chain chain(allocator_->allocate(static_cast<size_t>(chain_length), {}), storage_mode::in_memory);
     chain.name = partition_names[i];
     chain.metadata = partition_metadata[i];
