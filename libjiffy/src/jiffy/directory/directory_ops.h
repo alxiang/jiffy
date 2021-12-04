@@ -989,7 +989,9 @@ class directory_ops {
                              int32_t permissions,
                              const std::vector<std::string> &block_names,
                              const std::vector<std::string> &block_metadata,
-                             const std::map<std::string, std::string> &tags) = 0;
+                             const std::map<std::string, std::string> &tags,
+                             const std::string &host_name
+                             ) = 0;
 
   /**
    * @brief Open or create a file

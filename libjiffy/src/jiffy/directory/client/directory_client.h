@@ -87,7 +87,8 @@ class directory_client : public directory_interface {
                      int32_t permissions = perms::all(),
                      const std::vector<std::string> &block_names = {"0"},
                      const std::vector<std::string> &block_metadata = {""},
-                     const std::map<std::string, std::string> &tags = {}) override;
+                     const std::map<std::string, std::string> &tags = {},
+                     const std::string &host_name = "") override;
 
   /**
    * @brief Open if exist, otherwise create

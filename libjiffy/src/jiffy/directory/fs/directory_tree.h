@@ -100,7 +100,8 @@ class directory_tree : public directory_interface {
                      int32_t permissions = perms::all(),
                      const std::vector<std::string> &partition_names = {"0"},
                      const std::vector<std::string> &partition_metadata = {""},
-                     const std::map<std::string, std::string> &tags = {}) override;
+                     const std::map<std::string, std::string> &tags = {},
+                     const std::string &host_name = "") override;
 
   /**
    * @brief Open or create a file

@@ -60,10 +60,11 @@ data_status directory_client::create(const std::string &path,
                                      int32_t permissions,
                                      const std::vector<std::string> &block_names,
                                      const std::vector<std::string> &block_metadata,
-                                     const std::map<std::string, std::string> &tags) {
+                                     const std::map<std::string, std::string> &tags,
+                                     const std::string &host_name) {
   rpc_data_status s;
   client_->create(s, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_names,
-                  block_metadata, tags);
+                  block_metadata, tags, host_name);
   return directory_type_conversions::from_rpc(s);
 }
 

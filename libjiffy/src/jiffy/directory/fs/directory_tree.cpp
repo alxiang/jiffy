@@ -58,7 +58,9 @@ data_status directory_tree::create(const std::string &path,
                                    int32_t permissions,
                                    const std::vector<std::string> &partition_names,
                                    const std::vector<std::string> &partition_metadata,
-                                   const std::map<std::string, std::string> &tags) {
+                                   const std::map<std::string, std::string> &tags,
+                                   // which host_name to allocate all blocks on
+                                   const std::string &host_name) {
   LOG(log_level::info) << "Creating file " << path << " with backing_path=" << backing_path << " num_blocks="
                        << num_blocks << ", chain_length=" << chain_length;
   if (num_blocks == 0) {
