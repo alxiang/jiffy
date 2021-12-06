@@ -67,15 +67,18 @@ std::vector<std::string> random_block_allocator::allocate_to_host_name(std::size
   auto idx = static_cast<int64_t>(free_blocks_.size() - 1);
   auto it = std::next(free_blocks_.begin(), utils::rand_utils::rand_int64(idx));
   while (blocks_considered < free_blocks_.size() && blocks.size() < count) {
-    auto block_prefix = prefix(*it);
-    if (prefixes.find(block_prefix) == prefixes.end()) {
-      utils::logger(utils::log_level::info, utils::log_utils::compute_method_name(__FUNCTION__, __PRETTY_FUNCTION__)) << block_prefix;
-      // NOTE(ALEC): we allocate blocks if their prefixes don't match any prefixes seen so far
-      // This supports replication by having the blocks on different machines
-      // For our purposes, we shouldn't care about replication
-      // - each Flink worker's ValueState's ChronicleMap file has multiple blocks
-      // - all blocks should be on same node as Flink worker
-      // - we can turn off replication and have a length of 1 for each replication chain allocated
+
+    auto pos = it->find_first_of(':');
+    auto block_prefix = it->substr(0, pos);
+
+    // NOTE(ALEC): 
+    // - each Flink worker's ValueState's ChronicleMap file has multiple blocks
+    // - all blocks should be on same node as Flink worker
+    // - we can turn off replication and have a length of 1 for each replication chain allocated
+    utils::logger(utils::log_level::info, utils::log_utils::compute_method_name(__FUNCTION__, __PRETTY_FUNCTION__)) << block_prefix;
+    if (block_prefix == host_name) {
+      
+      
       blocks.push_back(*it);
       prefixes.insert(block_prefix);
     }
@@ -86,7 +89,7 @@ std::vector<std::string> random_block_allocator::allocate_to_host_name(std::size
   }
 
   if (blocks.size() != count) {
-    throw std::out_of_range("Could not find free blocks with distinct prefixes");
+    throw std::out_of_range("Could not find free blocks matching the provided host_name");
   }
 
   for (const auto &block: blocks) {
