@@ -704,6 +704,14 @@ uint32_t directory_service_create_args::read(Protocol_* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 11:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->host_name);
+          this->__isset.host_name = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -787,6 +795,10 @@ uint32_t directory_service_create_args::write(Protocol_* oprot) const {
   }
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("host_name", ::apache::thrift::protocol::T_STRING, 11);
+  xfer += oprot->writeString(this->host_name);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -862,6 +874,10 @@ uint32_t directory_service_create_pargs::write(Protocol_* oprot) const {
     }
     xfer += oprot->writeMapEnd();
   }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("host_name", ::apache::thrift::protocol::T_STRING, 11);
+  xfer += oprot->writeString((*(this->host_name)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -6291,14 +6307,14 @@ void directory_serviceClientT<Protocol_>::recv_open(rpc_data_status& _return)
 }
 
 template <class Protocol_>
-void directory_serviceClientT<Protocol_>::create(rpc_data_status& _return, const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags)
+void directory_serviceClientT<Protocol_>::create(rpc_data_status& _return, const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags, const std::string& host_name)
 {
-  send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags);
+  send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name);
   recv_create(_return);
 }
 
 template <class Protocol_>
-void directory_serviceClientT<Protocol_>::send_create(const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags)
+void directory_serviceClientT<Protocol_>::send_create(const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags, const std::string& host_name)
 {
   int32_t cseqid = 0;
   this->oprot_->writeMessageBegin("create", ::apache::thrift::protocol::T_CALL, cseqid);
@@ -6314,6 +6330,7 @@ void directory_serviceClientT<Protocol_>::send_create(const std::string& path, c
   args.block_ids = &block_ids;
   args.block_metadata = &block_metadata;
   args.tags = &tags;
+  args.host_name = &host_name;
   args.write(this->oprot_);
 
   this->oprot_->writeMessageEnd();
@@ -8282,7 +8299,7 @@ void directory_serviceProcessorT<Protocol_>::process_create(int32_t seqid, ::apa
 
   directory_service_create_result result;
   try {
-    iface_->create(result.success, args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags);
+    iface_->create(result.success, args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags, args.host_name);
     result.__isset.success = true;
   } catch (directory_service_exception &ex) {
     result.ex = ex;
@@ -8340,7 +8357,7 @@ void directory_serviceProcessorT<Protocol_>::process_create(int32_t seqid, Proto
 
   directory_service_create_result result;
   try {
-    iface_->create(result.success, args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags);
+    iface_->create(result.success, args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags, args.host_name);
     result.__isset.success = true;
   } catch (directory_service_exception &ex) {
     result.ex = ex;
@@ -11408,14 +11425,14 @@ void directory_serviceConcurrentClientT<Protocol_>::recv_open(rpc_data_status& _
 }
 
 template <class Protocol_>
-void directory_serviceConcurrentClientT<Protocol_>::create(rpc_data_status& _return, const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags)
+void directory_serviceConcurrentClientT<Protocol_>::create(rpc_data_status& _return, const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags, const std::string& host_name)
 {
-  int32_t seqid = send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags);
+  int32_t seqid = send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name);
   recv_create(_return, seqid);
 }
 
 template <class Protocol_>
-int32_t directory_serviceConcurrentClientT<Protocol_>::send_create(const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags)
+int32_t directory_serviceConcurrentClientT<Protocol_>::send_create(const std::string& path, const std::string& type, const std::string& backing_path, const int32_t num_blocks, const int32_t chain_length, const int32_t flags, const int32_t permissions, const std::vector<std::string> & block_ids, const std::vector<std::string> & block_metadata, const std::map<std::string, std::string> & tags, const std::string& host_name)
 {
   int32_t cseqid = this->sync_.generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(&this->sync_);
@@ -11432,6 +11449,7 @@ int32_t directory_serviceConcurrentClientT<Protocol_>::send_create(const std::st
   args.block_ids = &block_ids;
   args.block_metadata = &block_metadata;
   args.tags = &tags;
+  args.host_name = &host_name;
   args.write(this->oprot_);
 
   this->oprot_->writeMessageEnd();

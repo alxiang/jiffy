@@ -77,7 +77,7 @@ public class JiffyClient implements Closeable {
 
   private rpc_data_status initDataStructure(int initType, String path, String type,
       String backingPath,
-      int numBlocks, int chainLength, int flags, int permissions, Map<String, String> tags)
+      int numBlocks, int chainLength, int flags, int permissions, Map<String, String> tags, String host_name)
       throws TException {
     List<String> partitionNames = new ArrayList<>(numBlocks);
     List<String> partitionMetadata = new ArrayList<>(numBlocks);
@@ -89,7 +89,7 @@ public class JiffyClient implements Closeable {
     rpc_data_status status = null;
     if (initType == InitType.CREATE) {
       status = fs.create(path, type, backingPath, numBlocks, chainLength, flags, permissions,
-          partitionNames, partitionMetadata, tags);
+          partitionNames, partitionMetadata, tags, host_name);
     } else if (initType == InitType.OPEN_OR_CREATE) {
       status = fs.openOrCreate(path, type, backingPath, numBlocks, chainLength, flags, permissions,
           partitionNames, partitionMetadata, tags);
@@ -115,7 +115,7 @@ public class JiffyClient implements Closeable {
   public HashTableClient createHashTable(String path, String backingPath, int numBlocks,
       int chainLength, int flags, int permissions, Map<String, String> tags) throws TException {
     rpc_data_status status = initDataStructure(InitType.CREATE, path, "hashtable", backingPath,
-        numBlocks, chainLength, flags, permissions, tags);
+        numBlocks, chainLength, flags, permissions, tags, "");
     return new HashTableClient(fs, path, status, timeoutMs);
   }
 
@@ -144,7 +144,7 @@ public class JiffyClient implements Closeable {
       int chainLength, int flags, int permissions,
       Map<String, String> tags) throws TException {
     rpc_data_status status = initDataStructure(InitType.OPEN_OR_CREATE, path, "hashtable",
-        backingPath, numBlocks, chainLength, flags, permissions, tags);
+        backingPath, numBlocks, chainLength, flags, permissions, tags, "");
     return new HashTableClient(fs, path, status, timeoutMs);
   }
 
@@ -165,7 +165,14 @@ public class JiffyClient implements Closeable {
   public FileWriter createFile(String path, String backingPath, int numBlocks,
       int chainLength, int flags, int permissions, Map<String, String> tags) throws TException {
     rpc_data_status status = initDataStructure(InitType.CREATE, path, "file", backingPath,
-        numBlocks, chainLength, flags, permissions, tags);
+        numBlocks, chainLength, flags, permissions, tags, "");
+    return new FileWriter(fs, path, status, timeoutMs);
+  }
+
+  public FileWriter createFile(String path, String backingPath, int numBlocks,
+      int chainLength, int flags, int permissions, Map<String, String> tags, String host_name) throws TException {
+    rpc_data_status status = initDataStructure(InitType.CREATE, path, "file", backingPath,
+        numBlocks, chainLength, flags, permissions, tags, host_name);
     return new FileWriter(fs, path, status, timeoutMs);
   }
 
@@ -194,7 +201,7 @@ public class JiffyClient implements Closeable {
       int chainLength, int flags, int permissions,
       Map<String, String> tags) throws TException {
     rpc_data_status status = initDataStructure(InitType.OPEN_OR_CREATE, path, "file",
-        backingPath, numBlocks, chainLength, flags, permissions, tags);
+        backingPath, numBlocks, chainLength, flags, permissions, tags, "");
     return new FileWriter(fs, path, status, timeoutMs);
   }
 

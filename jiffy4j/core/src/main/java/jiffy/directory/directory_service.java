@@ -18,7 +18,7 @@ public class directory_service {
 
     public rpc_data_status open(java.lang.String path) throws directory_service_exception, org.apache.thrift.TException;
 
-    public rpc_data_status create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags) throws directory_service_exception, org.apache.thrift.TException;
+    public rpc_data_status create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name) throws directory_service_exception, org.apache.thrift.TException;
 
     public rpc_data_status openOrCreate(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags) throws directory_service_exception, org.apache.thrift.TException;
 
@@ -78,7 +78,7 @@ public class directory_service {
 
     public void open(java.lang.String path, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException;
 
-    public void create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException;
+    public void create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException;
 
     public void openOrCreate(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException;
 
@@ -222,13 +222,13 @@ public class directory_service {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "open failed: unknown result");
     }
 
-    public rpc_data_status create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags) throws directory_service_exception, org.apache.thrift.TException
+    public rpc_data_status create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name) throws directory_service_exception, org.apache.thrift.TException
     {
-      sendCreate(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags);
+      sendCreate(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name);
       return recvCreate();
     }
 
-    public void sendCreate(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags) throws org.apache.thrift.TException
+    public void sendCreate(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name) throws org.apache.thrift.TException
     {
       create_args args = new create_args();
       args.setPath(path);
@@ -241,6 +241,7 @@ public class directory_service {
       args.setBlockIds(block_ids);
       args.setBlockMetadata(block_metadata);
       args.setTags(tags);
+      args.setHostName(host_name);
       sendBase("create", args);
     }
 
@@ -990,9 +991,9 @@ public class directory_service {
       }
     }
 
-    public void create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException {
+    public void create(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      create_call method_call = new create_call(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, resultHandler, this, ___protocolFactory, ___transport);
+      create_call method_call = new create_call(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -1008,7 +1009,8 @@ public class directory_service {
       private java.util.List<java.lang.String> block_ids;
       private java.util.List<java.lang.String> block_metadata;
       private java.util.Map<java.lang.String,java.lang.String> tags;
-      public create_call(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private java.lang.String host_name;
+      public create_call(java.lang.String path, java.lang.String type, java.lang.String backing_path, int num_blocks, int chain_length, int flags, int permissions, java.util.List<java.lang.String> block_ids, java.util.List<java.lang.String> block_metadata, java.util.Map<java.lang.String,java.lang.String> tags, java.lang.String host_name, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.path = path;
         this.type = type;
@@ -1020,6 +1022,7 @@ public class directory_service {
         this.block_ids = block_ids;
         this.block_metadata = block_metadata;
         this.tags = tags;
+        this.host_name = host_name;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -1035,6 +1038,7 @@ public class directory_service {
         args.setBlockIds(block_ids);
         args.setBlockMetadata(block_metadata);
         args.setTags(tags);
+        args.setHostName(host_name);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -2044,7 +2048,7 @@ public class directory_service {
       public create_result getResult(I iface, create_args args) throws org.apache.thrift.TException {
         create_result result = new create_result();
         try {
-          result.success = iface.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags);
+          result.success = iface.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags, args.host_name);
         } catch (directory_service_exception ex) {
           result.ex = ex;
         }
@@ -3052,7 +3056,7 @@ public class directory_service {
       }
 
       public void start(I iface, create_args args, org.apache.thrift.async.AsyncMethodCallback<rpc_data_status> resultHandler) throws org.apache.thrift.TException {
-        iface.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags,resultHandler);
+        iface.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags, args.host_name,resultHandler);
       }
     }
 
@@ -6963,6 +6967,7 @@ public class directory_service {
     private static final org.apache.thrift.protocol.TField BLOCK_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("block_ids", org.apache.thrift.protocol.TType.LIST, (short)8);
     private static final org.apache.thrift.protocol.TField BLOCK_METADATA_FIELD_DESC = new org.apache.thrift.protocol.TField("block_metadata", org.apache.thrift.protocol.TType.LIST, (short)9);
     private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)10);
+    private static final org.apache.thrift.protocol.TField HOST_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("host_name", org.apache.thrift.protocol.TType.STRING, (short)11);
 
     private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new create_argsStandardSchemeFactory();
     private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new create_argsTupleSchemeFactory();
@@ -6977,6 +6982,7 @@ public class directory_service {
     public @org.apache.thrift.annotation.Nullable java.util.List<java.lang.String> block_ids; // required
     public @org.apache.thrift.annotation.Nullable java.util.List<java.lang.String> block_metadata; // required
     public @org.apache.thrift.annotation.Nullable java.util.Map<java.lang.String,java.lang.String> tags; // required
+    public @org.apache.thrift.annotation.Nullable java.lang.String host_name; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -6989,7 +6995,8 @@ public class directory_service {
       PERMISSIONS((short)7, "permissions"),
       BLOCK_IDS((short)8, "block_ids"),
       BLOCK_METADATA((short)9, "block_metadata"),
-      TAGS((short)10, "tags");
+      TAGS((short)10, "tags"),
+      HOST_NAME((short)11, "host_name");
 
       private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
 
@@ -7025,6 +7032,8 @@ public class directory_service {
             return BLOCK_METADATA;
           case 10: // TAGS
             return TAGS;
+          case 11: // HOST_NAME
+            return HOST_NAME;
           default:
             return null;
         }
@@ -7098,6 +7107,8 @@ public class directory_service {
           new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
+      tmpMap.put(_Fields.HOST_NAME, new org.apache.thrift.meta_data.FieldMetaData("host_name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(create_args.class, metaDataMap);
     }
@@ -7115,7 +7126,8 @@ public class directory_service {
       int permissions,
       java.util.List<java.lang.String> block_ids,
       java.util.List<java.lang.String> block_metadata,
-      java.util.Map<java.lang.String,java.lang.String> tags)
+      java.util.Map<java.lang.String,java.lang.String> tags,
+      java.lang.String host_name)
     {
       this();
       this.path = path;
@@ -7132,6 +7144,7 @@ public class directory_service {
       this.block_ids = block_ids;
       this.block_metadata = block_metadata;
       this.tags = tags;
+      this.host_name = host_name;
     }
 
     /**
@@ -7164,6 +7177,9 @@ public class directory_service {
         java.util.Map<java.lang.String,java.lang.String> __this__tags = new java.util.HashMap<java.lang.String,java.lang.String>(other.tags);
         this.tags = __this__tags;
       }
+      if (other.isSetHostName()) {
+        this.host_name = other.host_name;
+      }
     }
 
     public create_args deepCopy() {
@@ -7192,6 +7208,7 @@ public class directory_service {
       if (this.tags != null) {
         this.tags.clear();
       }
+      this.host_name = null;
     }
 
     @org.apache.thrift.annotation.Nullable
@@ -7479,6 +7496,31 @@ public class directory_service {
       }
     }
 
+    @org.apache.thrift.annotation.Nullable
+    public java.lang.String getHostName() {
+      return this.host_name;
+    }
+
+    public create_args setHostName(@org.apache.thrift.annotation.Nullable java.lang.String host_name) {
+      this.host_name = host_name;
+      return this;
+    }
+
+    public void unsetHostName() {
+      this.host_name = null;
+    }
+
+    /** Returns true if field host_name is set (has been assigned a value) and false otherwise */
+    public boolean isSetHostName() {
+      return this.host_name != null;
+    }
+
+    public void setHostNameIsSet(boolean value) {
+      if (!value) {
+        this.host_name = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, @org.apache.thrift.annotation.Nullable java.lang.Object value) {
       switch (field) {
       case PATH:
@@ -7561,6 +7603,14 @@ public class directory_service {
         }
         break;
 
+      case HOST_NAME:
+        if (value == null) {
+          unsetHostName();
+        } else {
+          setHostName((java.lang.String)value);
+        }
+        break;
+
       }
     }
 
@@ -7597,6 +7647,9 @@ public class directory_service {
       case TAGS:
         return getTags();
 
+      case HOST_NAME:
+        return getHostName();
+
       }
       throw new java.lang.IllegalStateException();
     }
@@ -7628,6 +7681,8 @@ public class directory_service {
         return isSetBlockMetadata();
       case TAGS:
         return isSetTags();
+      case HOST_NAME:
+        return isSetHostName();
       }
       throw new java.lang.IllegalStateException();
     }
@@ -7737,6 +7792,15 @@ public class directory_service {
           return false;
       }
 
+      boolean this_present_host_name = true && this.isSetHostName();
+      boolean that_present_host_name = true && that.isSetHostName();
+      if (this_present_host_name || that_present_host_name) {
+        if (!(this_present_host_name && that_present_host_name))
+          return false;
+        if (!this.host_name.equals(that.host_name))
+          return false;
+      }
+
       return true;
     }
 
@@ -7775,6 +7839,10 @@ public class directory_service {
       hashCode = hashCode * 8191 + ((isSetTags()) ? 131071 : 524287);
       if (isSetTags())
         hashCode = hashCode * 8191 + tags.hashCode();
+
+      hashCode = hashCode * 8191 + ((isSetHostName()) ? 131071 : 524287);
+      if (isSetHostName())
+        hashCode = hashCode * 8191 + host_name.hashCode();
 
       return hashCode;
     }
@@ -7887,6 +7955,16 @@ public class directory_service {
           return lastComparison;
         }
       }
+      lastComparison = java.lang.Boolean.valueOf(isSetHostName()).compareTo(other.isSetHostName());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetHostName()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.host_name, other.host_name);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -7969,6 +8047,14 @@ public class directory_service {
         sb.append("null");
       } else {
         sb.append(this.tags);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("host_name:");
+      if (this.host_name == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.host_name);
       }
       first = false;
       sb.append(")");
@@ -8134,6 +8220,14 @@ public class directory_service {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 11: // HOST_NAME
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.host_name = iprot.readString();
+                struct.setHostNameIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -8213,6 +8307,11 @@ public class directory_service {
           }
           oprot.writeFieldEnd();
         }
+        if (struct.host_name != null) {
+          oprot.writeFieldBegin(HOST_NAME_FIELD_DESC);
+          oprot.writeString(struct.host_name);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -8261,7 +8360,10 @@ public class directory_service {
         if (struct.isSetTags()) {
           optionals.set(9);
         }
-        oprot.writeBitSet(optionals, 10);
+        if (struct.isSetHostName()) {
+          optionals.set(10);
+        }
+        oprot.writeBitSet(optionals, 11);
         if (struct.isSetPath()) {
           oprot.writeString(struct.path);
         }
@@ -8311,12 +8413,15 @@ public class directory_service {
             }
           }
         }
+        if (struct.isSetHostName()) {
+          oprot.writeString(struct.host_name);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, create_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-        java.util.BitSet incoming = iprot.readBitSet(10);
+        java.util.BitSet incoming = iprot.readBitSet(11);
         if (incoming.get(0)) {
           struct.path = iprot.readString();
           struct.setPathIsSet(true);
@@ -8391,6 +8496,10 @@ public class directory_service {
             }
           }
           struct.setTagsIsSet(true);
+        }
+        if (incoming.get(10)) {
+          struct.host_name = iprot.readString();
+          struct.setHostNameIsSet(true);
         }
       }
     }

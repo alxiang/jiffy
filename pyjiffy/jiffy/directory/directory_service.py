@@ -42,7 +42,7 @@ class Iface(object):
         """
         pass
 
-    def create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags):
+    def create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name):
         """
         Parameters:
          - path
@@ -55,6 +55,7 @@ class Iface(object):
          - block_ids
          - block_metadata
          - tags
+         - host_name
 
         """
         pass
@@ -382,7 +383,7 @@ class Client(Iface):
             raise result.ex
         raise TApplicationException(TApplicationException.MISSING_RESULT, "open failed: unknown result")
 
-    def create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags):
+    def create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name):
         """
         Parameters:
          - path
@@ -395,12 +396,13 @@ class Client(Iface):
          - block_ids
          - block_metadata
          - tags
+         - host_name
 
         """
-        self.send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags)
+        self.send_create(path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name)
         return self.recv_create()
 
-    def send_create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags):
+    def send_create(self, path, type, backing_path, num_blocks, chain_length, flags, permissions, block_ids, block_metadata, tags, host_name):
         self._oprot.writeMessageBegin('create', TMessageType.CALL, self._seqid)
         args = create_args()
         args.path = path
@@ -413,6 +415,7 @@ class Client(Iface):
         args.block_ids = block_ids
         args.block_metadata = block_metadata
         args.tags = tags
+        args.host_name = host_name
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -1413,7 +1416,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = create_result()
         try:
-            result.success = self._handler.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags)
+            result.success = self._handler.create(args.path, args.type, args.backing_path, args.num_blocks, args.chain_length, args.flags, args.permissions, args.block_ids, args.block_metadata, args.tags, args.host_name)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -2527,6 +2530,7 @@ class create_args(object):
      - block_ids
      - block_metadata
      - tags
+     - host_name
 
     """
 
@@ -2541,10 +2545,11 @@ class create_args(object):
         'block_ids',
         'block_metadata',
         'tags',
+        'host_name',
     )
 
 
-    def __init__(self, path=None, type=None, backing_path=None, num_blocks=None, chain_length=None, flags=None, permissions=None, block_ids=None, block_metadata=None, tags=None,):
+    def __init__(self, path=None, type=None, backing_path=None, num_blocks=None, chain_length=None, flags=None, permissions=None, block_ids=None, block_metadata=None, tags=None, host_name=None,):
         self.path = path
         self.type = type
         self.backing_path = backing_path
@@ -2555,6 +2560,7 @@ class create_args(object):
         self.block_ids = block_ids
         self.block_metadata = block_metadata
         self.tags = tags
+        self.host_name = host_name
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -2631,6 +2637,11 @@ class create_args(object):
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 11:
+                if ftype == TType.STRING:
+                    self.host_name = iprot.readString()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -2691,6 +2702,10 @@ class create_args(object):
                 oprot.writeString(viter45)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
+        if self.host_name is not None:
+            oprot.writeFieldBegin('host_name', TType.STRING, 11)
+            oprot.writeString(self.host_name)
+            oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -2727,6 +2742,7 @@ create_args.thrift_spec = (
     (8, TType.LIST, 'block_ids', (TType.STRING, None, False), None, ),  # 8
     (9, TType.LIST, 'block_metadata', (TType.STRING, None, False), None, ),  # 9
     (10, TType.MAP, 'tags', (TType.STRING, None, TType.STRING, None, False), None, ),  # 10
+    (11, TType.STRING, 'host_name', None, None, ),  # 11
 )
 
 

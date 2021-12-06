@@ -63,7 +63,7 @@ service directory_service {
     throws (1: directory_service_exception ex),
   rpc_data_status create(1: string path, 2: string type, 3: string backing_path, 4: i32 num_blocks, 5: i32 chain_length,
                          6: i32 flags, 7: i32 permissions, 8: list<string> block_ids, 9: list<string> block_metadata,
-                         10: map<string, string> tags)
+                         10: map<string, string> tags, 11: string host_name)
     throws (1: directory_service_exception ex),
   rpc_data_status open_or_create(1: string path, 2: string type, 3: string backing_path, 4: i32 num_blocks,
                                  5: i32 chain_length, 6: i32 flags, 7: i32 permissions, 8: list<string> block_ids,
