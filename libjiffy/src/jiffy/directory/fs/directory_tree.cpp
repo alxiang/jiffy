@@ -61,7 +61,7 @@ data_status directory_tree::create(const std::string &path,
                                    const std::map<std::string, std::string> &tags,
                                    const std::string &host_name) {
   LOG(log_level::info) << "Creating file " << path << " with backing_path=" << backing_path << " num_blocks="
-                       << num_blocks << ", chain_length=" << chain_length << "host_name=" << host_name;
+                       << num_blocks << ", chain_length=" << chain_length << ", host_name=" << host_name;
   if (num_blocks == 0) {
     throw directory_ops_exception("File cannot have zero blocks");
   }
@@ -91,23 +91,33 @@ data_status directory_tree::create(const std::string &path,
   for (int32_t i = 0; i < num_blocks; ++i) {
 
     // NOTE(ALEC): This is exactly where blocks are allocated
-    replica_chain chain;
+    std::vector<std::string> allocated_blocks;
     if(host_name.empty()){
-      replica_chain chain(allocator_->allocate(static_cast<size_t>(chain_length), {}), storage_mode::in_memory);
+      LOG(log_level::info) << "calling allocate()";
+       allocated_blocks = allocator_->allocate(static_cast<size_t>(chain_length), {});
     }
     else{
-      replica_chain chain(allocator_->allocate_to_host_name(static_cast<size_t>(chain_length), {}, host_name), storage_mode::in_memory);
+      LOG(log_level::info) << "calling allocate_to_host_name()";
+      allocated_blocks = allocator_->allocate_to_host_name(static_cast<size_t>(chain_length), {}, host_name);
     }
+    replica_chain chain(allocated_blocks, storage_mode::in_memory);
+    
+    LOG(log_level::info) << "test1";
     
     chain.name = partition_names[i];
     chain.metadata = partition_metadata[i];
     assert(chain.block_ids.size() == chain_length);
     blocks.push_back(chain);
     using namespace storage;
+    LOG(log_level::info) << "test2";
     if (chain_length == 1) {
+      LOG(log_level::info) << "if" << chain.block_ids[0];
       storage_->create_partition(chain.block_ids[0], type, backing_path, chain.name, chain.metadata, tags);
+      LOG(log_level::info) << "partition created";
       storage_->setup_chain(chain.block_ids[0], path, chain.block_ids, chain_role::singleton, "nil");
+      LOG(log_level::info) << "chain setup";
     } else {
+      LOG(log_level::info) << "else";
       for (int32_t j = 0; j < chain_length; ++j) {
         std::string block_id = chain.block_ids[j];
         std::string next_block_id = (j == chain_length - 1) ? "nil" : chain.block_ids[j + 1];
@@ -116,11 +126,13 @@ data_status directory_tree::create(const std::string &path,
         storage_->setup_chain(block_id, path, chain.block_ids, role, next_block_id);
       }
     }
+    LOG(log_level::info) << "test3";
   }
   auto child = std::make_shared<ds_file_node>(filename, type, backing_path, chain_length, blocks, flags, permissions,
                                               tags);
 
   parent->add_child(child);
+  LOG(log_level::info) << "test4";
 
   return child->dstatus();
 }
