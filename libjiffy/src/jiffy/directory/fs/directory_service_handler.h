@@ -61,7 +61,8 @@ class directory_service_handler : public directory_serviceIf {
   void create(rpc_data_status &_return, const std::string &path, const std::string &type,
               const std::string &backing_path, int32_t num_blocks, int32_t chain_length, int32_t flags,
               int32_t permissions, const std::vector<std::string> &block_names,
-              const std::vector<std::string> &block_metadata, const std::map<std::string, std::string> &tags) override;
+              const std::vector<std::string> &block_metadata, const std::map<std::string, std::string> &tags,
+              const std::string &host_name) override;
 
   /**
    * @brief Open or create a file

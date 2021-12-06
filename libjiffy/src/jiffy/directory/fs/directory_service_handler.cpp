@@ -41,10 +41,11 @@ void directory_service_handler::create(rpc_data_status &_return,
                                        int32_t permissions,
                                        const std::vector<std::string> &block_names,
                                        const std::vector<std::string> &block_metadata,
-                                       const std::map<std::string, std::string> &tags) {
+                                       const std::map<std::string, std::string> &tags,
+                                       const std::string &host_name) {
   try {
     _return = directory_type_conversions::to_rpc(shard_->create(path, type, backing_path, num_blocks, chain_length,
-                                                                flags, permissions, block_names, block_metadata, tags));
+                                                                flags, permissions, block_names, block_metadata, tags, host_name));
   } catch (directory_ops_exception &e) {
     throw make_exception(e);
   }
