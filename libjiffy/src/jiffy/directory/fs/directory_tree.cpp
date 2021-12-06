@@ -61,7 +61,7 @@ data_status directory_tree::create(const std::string &path,
                                    const std::map<std::string, std::string> &tags,
                                    const std::string &host_name) {
   LOG(log_level::info) << "Creating file " << path << " with backing_path=" << backing_path << " num_blocks="
-                       << num_blocks << ", chain_length=" << chain_length;
+                       << num_blocks << ", chain_length=" << chain_length << "host_name=" << host_name;
   if (num_blocks == 0) {
     throw directory_ops_exception("File cannot have zero blocks");
   }
@@ -91,7 +91,14 @@ data_status directory_tree::create(const std::string &path,
   for (int32_t i = 0; i < num_blocks; ++i) {
 
     // NOTE(ALEC): This is exactly where blocks are allocated
-    replica_chain chain(allocator_->allocate(static_cast<size_t>(chain_length), {}), storage_mode::in_memory);
+    replica_chain chain;
+    if(host_name.empty()){
+      replica_chain chain(allocator_->allocate(static_cast<size_t>(chain_length), {}), storage_mode::in_memory);
+    }
+    else{
+      replica_chain chain(allocator_->allocate_to_host_name(static_cast<size_t>(chain_length), {}, host_name), storage_mode::in_memory);
+    }
+    
     chain.name = partition_names[i];
     chain.metadata = partition_metadata[i];
     assert(chain.block_ids.size() == chain_length);

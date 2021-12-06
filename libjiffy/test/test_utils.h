@@ -105,6 +105,17 @@ class sequential_block_allocator : public jiffy::directory::block_allocator {
     }
     return allocated;
   }
+
+  std::vector<std::string> allocate_to_host_name(std::size_t count, const std::vector<std::string> &, const std::string &host_name="") override {
+      std::vector<std::string> allocated;
+      for (std::size_t i = 0; i < count; i++) {
+        allocated.push_back(free_.front());
+        alloc_.push_back(free_.front());
+        free_.erase(free_.begin());
+      }
+      return allocated;
+    }
+
   void free(const std::vector<std::string> &block_names) override {
     free_.insert(free_.end(), block_names.begin(), block_names.end());
     for (const auto &block_name: block_names) {
@@ -141,6 +152,19 @@ class dummy_block_allocator : public jiffy::directory::block_allocator {
   virtual ~dummy_block_allocator() = default;
 
   std::vector<std::string> allocate(std::size_t count, const std::vector<std::string> &) override {
+    if (num_free_ == 0) {
+      throw std::out_of_range("Cannot allocate since nothing is free");
+    }
+    std::vector<std::string> ret;
+    for (std::size_t i = 0; i < count; ++i) {
+      ret.push_back(std::to_string(num_alloc_ + i));
+    }
+    num_alloc_ += count;
+    num_free_ -= count;
+    return ret;
+  }
+
+  std::vector<std::string> allocate_to_host_name(std::size_t count, const std::vector<std::string> &, const std::string &host_name = "") override {
     if (num_free_ == 0) {
       throw std::out_of_range("Cannot allocate since nothing is free");
     }

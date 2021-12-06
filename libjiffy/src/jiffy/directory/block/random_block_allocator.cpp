@@ -52,6 +52,52 @@ std::vector<std::string> random_block_allocator::allocate(std::size_t count, con
   return blocks;
 }
 
+std::vector<std::string> random_block_allocator::allocate_to_host_name(std::size_t count, const std::vector<std::string> &exclude_list, const std::string &host_name){
+  std::unique_lock<std::mutex> lock(mtx_);
+  if (count > free_blocks_.size()) {
+    throw std::out_of_range(
+        "Insufficient free blocks to allocate from (requested: " + std::to_string(count) + ", have: "
+            + std::to_string(free_blocks_.size()));
+  }
+  std::vector<std::string> blocks;
+  std::set<std::string> prefixes;
+
+  // Find blocks with different prefixes
+  size_t blocks_considered = 0;
+  auto idx = static_cast<int64_t>(free_blocks_.size() - 1);
+  auto it = std::next(free_blocks_.begin(), utils::rand_utils::rand_int64(idx));
+  while (blocks_considered < free_blocks_.size() && blocks.size() < count) {
+    auto block_prefix = prefix(*it);
+    if (prefixes.find(block_prefix) == prefixes.end()) {
+      utils::logger(utils::log_level::info, utils::log_utils::compute_method_name(__FUNCTION__, __PRETTY_FUNCTION__)) << block_prefix;
+      // NOTE(ALEC): we allocate blocks if their prefixes don't match any prefixes seen so far
+      // This supports replication by having the blocks on different machines
+      // For our purposes, we shouldn't care about replication
+      // - each Flink worker's ValueState's ChronicleMap file has multiple blocks
+      // - all blocks should be on same node as Flink worker
+      // - we can turn off replication and have a length of 1 for each replication chain allocated
+      blocks.push_back(*it);
+      prefixes.insert(block_prefix);
+    }
+    if (++it == free_blocks_.end()) {
+      it = free_blocks_.begin();
+    }
+    ++blocks_considered;
+  }
+
+  if (blocks.size() != count) {
+    throw std::out_of_range("Could not find free blocks with distinct prefixes");
+  }
+
+  for (const auto &block: blocks) {
+    free_blocks_.erase(block);
+    allocated_blocks_.insert(block);
+  }
+
+  return blocks;
+}
+
+
 void random_block_allocator::free(const std::vector<std::string> &blocks) {
   std::unique_lock<std::mutex> lock(mtx_);
   std::vector<std::string> not_freed;
